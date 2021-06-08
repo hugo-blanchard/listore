@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping(path = "api/person")
+@RequestMapping(path = "listore/api/person")
 public class PersonController {
 	@Autowired
 	private PersonService personService;

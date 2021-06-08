@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping(path = "api/utype")
+@RequestMapping(path = "listore/api/utype")
 public class UtypeController {
 	@Autowired
 	private UtypeService utypeService;

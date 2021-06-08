@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping(path = "api/unit")
+@RequestMapping(path = "listore/api/unit")
 public class UnitController extends BaseController {
 	@Autowired
 	private UnitService unitService;
