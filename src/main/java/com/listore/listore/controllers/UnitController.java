@@ -14,10 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping(path = "listore/api/unit")
@@ -35,45 +32,49 @@ public class UnitController extends BaseController {
 	private PersonService personService;
 	
 	@GetMapping
-	public List<Map<String,Object>> getUnits() {
-		List<Unit> units = unitService.getUnits();
-		List<Map<String, Object>> unitMaps = new LinkedList<>();
-		
-		for (Unit unit : units) {
-			HashMap<String,Object> unitMap = new HashMap<>(unit.toMap());
+	public Map<String,Object> getUnits(@RequestParam(value = "skipPage", defaultValue = "0") int skipPage) {
+		try {
+			List<Map<String, Object>> unitMaps = new ArrayList<>();
 			
-			// fields to remove
-			unitMap.remove("actions");
+			unitService.getUnits(skipPage).forEach(unit -> {
+				unitMaps.add(unit.toMap(0));
+			});
 			
-			unitMaps.add(unitMap);
+			return Map.of("units", unitMaps);
+		} catch (Exception error) {
+			return Map.of("error", error);
 		}
-		
-		return unitMaps;
 	}
 	
 	@GetMapping(path = "{unitId}")
-	public Map<String, Object> getUnit(@PathVariable(name = "unitId") Long id) {
-		return unitService.getUnit(id).toMap();
+	public Map<String, Object> getUnit(
+			@PathVariable(name = "unitId") Long id,
+			@RequestParam(value = "deep", defaultValue = "false") boolean deep
+	) {
+		try {
+			return unitService.getUnit(id).toMap(deep ? 1 : 0);
+		} catch (Exception error) {
+			return Map.of("error", error.getMessage());
+		}
 	}
 	
 	@PostMapping
 	public Map<String, Object> addUnit(@Valid @RequestBody UnitRequestModel unitRequestModel) {
-		// find the corresponding DB entries from the request body
-		final Utype utype = utypeService.getUtypeInstance(unitRequestModel.utypeId);
-		final Person person = personService.getPersonInstance(unitRequestModel.personId);
-		
-		// save the unit
-		final Unit unit = new Unit(utype);
-		final Unit savedUnit = unitService.addUnit(unit);
-		
-		// save the related action and delete the previously saved unit if it fails
 		try {
-			final Action action = new Action(person, savedUnit, Enums.ActionType.IN);
-			actionService.addAction(action);
-		} catch (Exception exception) {
-			// delete the previously saved unit
+			final Utype utype = utypeService.getUtype(unitRequestModel.utypeId);
+			final Person person = personService.getPerson(unitRequestModel.personId);
+			
+			final List<Unit> unitList = unitService.saveUnits(utype, unitRequestModel.amount);
+			
+			// TODO : potential issue here, since at that point the units have already been saved, if saving the action fails, it won't stop anything from working, but the action will be missing, this might need to be handled
+			final Action action = actionService.addAction(new Action(person, unitList, Enums.ActionType.IN));
+			
+			List<Long> unitIdList = new ArrayList<>();
+			unitList.forEach(unit -> unitIdList.add(unit.getId()));
+			
+			return Map.of("action", action, "savedUnitsIds", unitIdList);
+		} catch (Exception error) {
+			return Map.of("error", error.getMessage());
 		}
-
-		return savedUnit.toMap();
 	}
 }

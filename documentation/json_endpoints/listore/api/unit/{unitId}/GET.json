@@ -1,0 +1,40 @@
+{
+    "request": {
+        "parameters": {
+            "deep": {
+                "type": "boolean",
+                "optional": true,
+                "default =": false,
+                "definition": "If deep is false, the response will be the unit with only its id and type, if true, with all id, type and actions, if the database is large, deep=true might take a long time"
+            }
+        }
+    },
+    "response": {
+        "200": {
+            "if deep=false": {
+                "id": "long",
+                "type": {
+                    "id": "long",
+                    "name": "string"
+                }
+            },
+            "if deep=true": {
+                "id": "long",
+                "type": {
+                    "id": "long",
+                    "name": "string"
+                },
+                "actions": [{
+                    "id": "long",
+                    "date": "date/time",
+                    "type": "string"
+                }]
+            }
+        },
+        "400": {
+            "if the path parameter {unitId} did not correspond to a unit in the database": {
+                "error": "Unit with id _ does not exist"
+            }
+        }
+    }
+}

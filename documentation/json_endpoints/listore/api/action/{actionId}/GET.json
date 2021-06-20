@@ -1,0 +1,38 @@
+{
+    "request": {
+        "parameters": {
+            "deep": {
+                "type": "boolean",
+                "optional": true,
+                "default =": false,
+                "definition": "If deep is false, the response will be the action without its relations, if true, with all relations, if the database is large, deep=true might take a long time"
+            }
+        }
+    },
+    "response": {
+        "200": {
+            "if deep=false": {
+                "id": "long",
+                "date": "date/time",
+                "type": "string"
+            },
+            "if deep=true": {
+                "id": "long",
+                "date": "date/time",
+                "type": "string",
+                "person": {
+                    "id": "long",
+                    "name": "string"
+                },
+                "units": [{
+                    "id": "long"
+                }]
+            }
+        },
+        "400": {
+            "if the path parameter {actionId} did not correspond to an action in the database": {
+                "error": "Unit with id _ does not exist"
+            }
+        }
+    }
+}

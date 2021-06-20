@@ -1,0 +1,33 @@
+{
+    "request": {
+        "parameters": {
+            "deep": {
+                "type": "boolean",
+                "optional": true,
+                "default =": false,
+                "definition": "If deep is false, the response will be the unit type with only its amount of related units, if true, with the id of all its units, if the database is large, deep=true might take a long time"
+            }
+        }
+    },
+    "response": {
+        "200": {
+            "if deep=false": {
+                "id": "long",
+                "name": "string",
+                "numberOfUnits": "integer"
+            },
+            "if deep=true": {
+                "id": "long",
+                "name": "string",
+                "units": [{
+                    "id": "long"
+                }]
+            }
+        },
+        "400": {
+            "if the path parameter {utypeId} did not correspond to a unit type in the database": {
+                "error": "Unit type with id _ does not exist"
+            }
+        }
+    }
+}

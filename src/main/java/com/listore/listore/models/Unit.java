@@ -27,7 +27,7 @@ public class Unit {
 	@JoinColumn(name = "utype_id")
 	private Utype type;
 	
-	@OneToMany(mappedBy = "unit")
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "units")
 	private List<Action> actions;
 	//--------------------------------------------------
 	//endregion
@@ -48,11 +48,16 @@ public class Unit {
 		this.type = type;
 	}
 	
-	public Map<String, Object> toMap() {
-		return Map.of(
-				"id", id != null ? id : "",
-				"type", type != null ? type : "",
-				"actions", actions != null ? actions : ""
-		);
+	public Map<String, Object> toMap(int depth) {
+		return depth > 0
+				? Map.of(
+						"id", id != null ? id : "",
+						"type", type != null ? type : "",
+						"actions", actions != null ? actions : ""
+				)
+				: Map.of(
+						"id", id != null ? id : "",
+						"type", type != null ? type : ""
+				);
 	}
 }

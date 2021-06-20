@@ -1,0 +1,34 @@
+{
+    "request": {
+        "parameters": {
+            "deep": {
+                "type": "boolean",
+                "optional": true,
+                "default =": false,
+                "definition": "If deep is false, the response will be the person without its relations, if true, with all relations, if the database is large, deep=true might take a long time"
+            }
+        }
+    },
+    "response": {
+        "200": {
+            "if deep=false": {
+                "id": "long",
+                "name": "string"
+            },
+            "if deep=true": {
+                "id": "long",
+                "name": "string",
+                "actions": [{
+                    "id": "long",
+                    "date": "date/time",
+                    "type": "string"
+                }]
+            }
+        },
+        "400": {
+            "if the path parameter {personId} did not correspond to a person in the database": {
+                "error": "Person with id _ does not exist"
+            }
+        }
+    }
+}

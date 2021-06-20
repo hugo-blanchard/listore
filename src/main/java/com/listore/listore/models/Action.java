@@ -2,6 +2,7 @@ package com.listore.listore.models;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 import com.listore.listore.utils.Enums;
@@ -28,9 +29,13 @@ public class Action {
 	@Enumerated(EnumType.ORDINAL)
 	private Enums.ActionType type;
 	
-	@ManyToOne
-	@JoinColumn(name = "unit_id")
-	private Unit unit;
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(
+			name = "unit_action_join",
+			joinColumns = @JoinColumn(name = "action_id"),
+			inverseJoinColumns = @JoinColumn(name = "unit_id")
+	)
+	private List<Unit> units;
 	
 	@ManyToOne
 	@JoinColumn(name = "person_id")
@@ -42,11 +47,15 @@ public class Action {
 	
 	}
 	
-	public Action(Person person, Unit unit, Enums.ActionType type) {
+	public Action(Person person, List<Unit> units, Enums.ActionType type) {
 		this.person = person;
-		this.unit = unit;
+		this.units = units;
 		this.type = type;
 		this.date = LocalDateTime.now();
+	}
+	
+	public Long getId() {
+		return id;
 	}
 	
 	public LocalDateTime getDate() {
@@ -57,13 +66,19 @@ public class Action {
 		return type;
 	}
 	
-	public Map<String, Object> toMap() {
-		return Map.of(
-				"id", id != null ? id : "",
-				"date", date != null ? date : "",
-				"type", type != null ? type : "",
-				"unit", unit != null ? unit : "",
-				"person", person != null ? person : ""
-		);
+	public Map<String, Object> toMap(int depth) {
+		return depth > 0
+				? Map.of(
+						"id", id != null ? id : "",
+						"date", date != null ? date : "",
+						"type", type != null ? type : "",
+						"units", units != null ? units : "",
+						"person", person != null ? person : ""
+				)
+				: Map.of(
+						"id", id != null ? id : "",
+						"date", date != null ? date : "",
+						"type", type != null ? type : ""
+				);
 	}
 }

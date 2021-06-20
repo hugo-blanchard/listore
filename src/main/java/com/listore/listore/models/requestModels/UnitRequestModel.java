@@ -4,15 +4,18 @@ import javax.validation.constraints.NotNull;
 
 public class UnitRequestModel {
 	@NotNull
-	public Long utypeId;
+	public long utypeId;
 	
 	@NotNull
-	public Long personId;
+	public long personId;
+	
+	public int amount;
 	
 	public UnitRequestModel() {}
 	
-	public UnitRequestModel(Long utypeId, Long personId) {
+	public UnitRequestModel(long utypeId, long personId, int amount) {
 		this.utypeId = utypeId;
 		this.personId = personId;
+		this.amount = amount;
 	}
 }

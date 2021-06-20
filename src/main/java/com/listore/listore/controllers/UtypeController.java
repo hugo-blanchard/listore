@@ -6,8 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,29 +17,53 @@ public class UtypeController {
 	private UtypeService utypeService;
 	
 	@GetMapping
-	public List<Map<String, Object>> getUtypes() {
-		List<Utype> utypes = utypeService.getUtypes();
-		List<Map<String, Object>> utypeMaps = new LinkedList<>();
-		
-		for (Utype utype : utypes) {
-			HashMap<String, Object> utypeMap = new HashMap<>(utype.toMap());
+	public Map<String, Object> getUtypes(
+			@RequestParam(value = "skipPage", defaultValue = "0") int skipPage,
+			@RequestParam(value = "deep", defaultValue = "false") boolean deep
+	) {
+		try {
+			List<Map<String, Object>> utypeMaps = new ArrayList<>();
 			
-			// fields to remove
-			utypeMap.remove("units");
+			utypeService.getUtypes(skipPage).forEach(utype -> {
+				utypeMaps.add(utype.toMap(deep ? 1 : 0));
+			});
 			
-			utypeMaps.add(utypeMap);
+			return Map.of("unitTypes", utypeMaps);
+		} catch (Exception error) {
+			return Map.of("error", error.getMessage());
 		}
-		
-		return utypeMaps;
 	}
 	
 	@GetMapping(path = "{utypeId}")
-	public Map<String, Object> getUtype(@PathVariable(name = "utypeId") Long id) {
-		return utypeService.getUtype(id).toMap();
+	public Map<String, Object> getUtype(
+			@PathVariable(name = "utypeId") long id,
+			@RequestParam(value = "deep", defaultValue = "false") boolean deep
+	) {
+		try {
+			return utypeService.getUtype(id).toMap(deep ? 2 : 1);
+		} catch (Exception error) {
+			return Map.of("error", error.getMessage());
+		}
 	}
 	
 	@PostMapping
 	public Map<String, Object> addUtype(@Valid @RequestBody Utype utype) {
-		return utypeService.addUtype(utype).toMap();
+		try {
+			return utypeService.addUtype(utype).toMap(0);
+		} catch (Exception error) {
+			return Map.of("error", error.getMessage());
+		}
+	}
+	
+	@PutMapping(path = "{utypeId}")
+	public Map<String, Object> updateUtype(
+			@PathVariable(name = "utypeId") Long id,
+			@Valid @RequestBody Utype utype
+	) {
+		try {
+			return utypeService.updateUtype(id, utype).toMap(0);
+		} catch (Exception error) {
+			return Map.of("error", error.getMessage());
+		}
 	}
 }

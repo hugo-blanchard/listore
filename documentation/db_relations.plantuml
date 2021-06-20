@@ -1,0 +1,43 @@
+@startuml
+hide methods
+hide stereotypes
+hide circle
+
+class Action {
+    id INTEGER
+    date DATE/TIME
+    type SMALLINT
+    person_id FK
+    units VF
+}
+
+class Person {
+    id INTEGER
+    name VARCHAR[255]
+    password VARCHAR[255]
+    actions VF
+}
+
+class Utype {
+    id INTEGER
+    name VARCHAR[255]
+    units VF
+}
+
+class Unit {
+    id INTEGER
+    utype_id FK
+    actions VF
+}
+
+class Unit_action_join {
+    action_id FK
+    unit_id FK
+}
+
+Person "1" <--> "0..*" Action
+Unit "0..*" <--> "1" Utype
+Unit "1" <-down-> "0..*" Unit_action_join
+Action "1" <-up-> "0..*" Unit_action_join
+
+@enduml

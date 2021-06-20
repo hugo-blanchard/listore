@@ -1,5 +1,8 @@
 package com.listore.listore.models;
 
+import com.listore.listore.utils.Func;
+import org.hibernate.annotations.Formula;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -50,11 +53,24 @@ public class Utype {
 		this.name = name;
 	}
 	
-	public Map<String, Object> toMap() {
-		return Map.of(
-				"id", id != null ? id : "",
-				"name", name != null ? name : "",
-				"units", units != null ? units : ""
-		);
+	public Map<String, Object> toMap(int depth) {
+		depth = Func.clamp(depth, 0, 2);
+		
+		return switch (depth) {
+			case 1 -> Map.of(
+					"id", id != null ? id : "",
+					"name", name != null ? name : "",
+					"numberOfUnits", units != null ? units.size() : 0
+			);
+			case 2 -> Map.of(
+					"id", id != null ? id : "",
+					"name", name != null ? name : "",
+					"units", units != null ? units : ""
+			);
+			default -> Map.of(
+					"id", id != null ? id : "",
+					"name", name != null ? name : ""
+			);
+		};
 	}
 }

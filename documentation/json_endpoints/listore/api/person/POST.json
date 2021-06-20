@@ -1,0 +1,21 @@
+{
+    "request": {
+        "body": {
+            "name": "string"
+        }
+    },
+    "response": {
+        "200": {
+            "id": "long",
+            "name": "string"
+        },
+        "400": {
+            "if the request body had no name fields": {
+                "error": "Bad request"
+            },
+            "if a person with the specified name already exists": {
+                "error": "A person with this name already exists"
+            }
+        }
+    }
+}

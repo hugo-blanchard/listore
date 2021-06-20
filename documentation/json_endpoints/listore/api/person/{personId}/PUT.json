@@ -1,0 +1,21 @@
+{
+    "request": {
+        "body": {
+            "name": "string"
+        }
+    },
+    "response": {
+        "200": {
+            "id": "long",
+            "name": "string"
+        },
+        "400": {
+            "if the request body had no name fields": {
+                "error": "Bad request"
+            },
+            "if the path parameter {personId} did not correspond to a person in the database": {
+                "error": "Person with id _ does not exist"
+            }
+        }
+    }
+}

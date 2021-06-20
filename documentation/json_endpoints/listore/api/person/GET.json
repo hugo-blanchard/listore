@@ -1,0 +1,20 @@
+{
+    "request": {
+        "parameters": {
+            "skipPage": {
+                "type": "integer",
+                "optional": true,
+                "default =": 0,
+                "definition": "The response will send the first 100 results, if parameter skipPage with value of 4 is given, the response will skip the first 400 results"
+            }
+        }
+    },
+    "response": {
+        "200": {
+            "persons": [{
+                "id": "long",
+                "name": "string"
+            }]
+        }
+    }
+}

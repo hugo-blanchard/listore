@@ -6,8 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,29 +17,50 @@ public class PersonController {
 	private PersonService personService;
 	
 	@GetMapping
-	public List<Map<String,Object>> getPersons() {
-		List<Person> persons = personService.getPersons();
-		List<Map<String, Object>> personMaps = new LinkedList<>();
-		
-		for (Person person : persons) {
-			HashMap<String,Object> personMap = new HashMap<>(person.toMap());
+	public Map<String,Object> getPersons(@RequestParam(value = "skipPage", defaultValue = "0") int skipPage) {
+		try {
+			List<Map<String, Object>> personMaps = new ArrayList<>();
 			
-			// fields to remove
-			personMap.remove("actions");
+			personService.getPersons(skipPage).forEach(person -> {
+				personMaps.add(person.toMap(0));
+			});
 			
-			personMaps.add(personMap);
+			return Map.of("persons", personMaps);
+		} catch (Exception error) {
+			return Map.of("error", error.getMessage());
 		}
-		
-		return personMaps;
 	}
 	
 	@GetMapping(path = "{personId}")
-	public Map<String, Object> getPerson(@PathVariable(name = "personId") Long id) {
-		return personService.getPerson(id).toMap();
+	public Map<String, Object> getPerson(
+			@PathVariable(name = "personId") Long id,
+			@RequestParam(value = "deep", defaultValue = "false") boolean deep
+	) {
+		try {
+			return personService.getPerson(id).toMap(deep ? 1 : 0);
+		} catch (Exception error) {
+			return Map.of("error", error.getMessage());
+		}
 	}
 	
 	@PostMapping
 	public Map<String, Object> registerPerson(@Valid @RequestBody Person person) {
-		return personService.addPerson(person).toMap();
+		try {
+			return personService.addPerson(person).toMap(0);
+		} catch (Exception error) {
+			return Map.of("error", error.getMessage());
+		}
+	}
+	
+	@PutMapping(path = "{personId}")
+	public Map<String, Object> updatePerson(
+			@PathVariable(name = "personId") Long id,
+			@Valid @RequestBody Person requestPerson
+	) {
+		try {
+			return personService.updatePerson(id, requestPerson).toMap(0);
+		} catch (Exception error) {
+			return Map.of("error", error.getMessage());
+		}
 	}
 }

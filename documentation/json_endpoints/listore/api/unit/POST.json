@@ -1,0 +1,30 @@
+{
+    "request": {
+        "body": {
+            "utypeId": "long",
+            "personId": "long",
+            "amount": "integer"
+        }
+    },
+    "response": {
+        "200": {
+            "action": {
+                "id": "long",
+                "date": "date/time",
+                "type": "string"
+            },
+            "savedUnitsIds": ["long"]
+        },
+        "400": {
+            "if the request body had no utypeId, personId or amount fields": {
+                "error": "Bad request"
+            },
+            "if the field personId did not correspond to a person in the database": {
+                "error": "Person with id _ does not exist"
+            },
+            "if the field utypeId did not correspond to a unit type in the database": {
+                "error": "Unit type with id _ does not exist"
+            }
+        }
+    }
+}

@@ -1,0 +1,21 @@
+{
+    "request": {
+        "body": {
+            "name": "string"
+        }
+    },
+    "response": {
+        "200": {
+            "id": "long",
+            "name": "string"
+        },
+        "400": {
+            "if the request body had no name fields": {
+                "error": "Bad request"
+            },
+            "if a unit type with the specified name already exists": {
+                "error": "A unit type with this name already exists"
+            }
+        }
+    }
+}

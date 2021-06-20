@@ -1,0 +1,35 @@
+{
+    "request": {
+        "parameters": {
+            "skipPage": {
+                "type": "integer",
+                "optional": true,
+                "default =": 0,
+                "definition": "The response will send the first 100 results, if parameter skipPage with value of 4 is given, the response will skip the first 400 results"
+            },
+            "deep": {
+                "type": "boolean",
+                "optional": true,
+                "default =": false,
+                "definition": "If deep is false, the response will be the utype without its relations, if true, with it's amount of units, if the database is large, deep=true might take a long time"
+            }
+        }
+    },
+    "response": {
+        "200": {
+            "if deep=false": {
+                "unitTypes": [{
+                    "id": "long",
+                    "name": "string"
+                }]
+            },
+            "if deep=true": {
+                "unitTypes": [{
+                    "id": "long",
+                    "name": "string",
+                    "numberOfUnits": "integer"
+                }]
+            }
+        }
+    }
+}

@@ -25,7 +25,7 @@ public class Person {
 	@NotBlank(message = "Name is mandatory")
 	private String name;
 	
-	@OneToMany(mappedBy = "person")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "person")
 	private List<Action> actions;
 	//--------------------------------------------------
 	//endregion
@@ -48,11 +48,16 @@ public class Person {
 		this.name = name;
 	}
 	
-	public Map<String, Object> toMap() {
-		return Map.of(
-				"id", id != null ? id : "",
-				"name", name != null ? name : "",
-				"actions", actions != null ? actions : ""
-		);
+	public Map<String, Object> toMap(int depth) {
+		return depth > 0
+				? Map.of(
+						"id", id != null ? id : "",
+						"name", name != null ? name : "",
+						"actions", actions != null ? actions : ""
+				)
+				: Map.of(
+						"id", id != null ? id : "",
+						"name", name != null ? name : ""
+				);
 	}
 }

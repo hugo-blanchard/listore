@@ -1,17 +1,10 @@
 package com.listore.listore.controllers;
 
-
-import com.listore.listore.models.Action;
 import com.listore.listore.services.ActionService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -22,24 +15,29 @@ public class ActionController {
 	private ActionService actionService;
 	
 	@GetMapping
-	public List<Map<String, Object>> getActions() {
-		List<Action> actions = actionService.getActions();
-		List<Map<String, Object>> actionMaps = new LinkedList<>();
-		
-		for (Action action : actions) {
-			HashMap<String, Object> actionMap = new HashMap<>(action.toMap());
+	public Map<String, Object> getActions(@RequestParam(value = "skipPage", defaultValue = "0") int skipPage) {
+		try {
+			List<Map<String, Object>> actionMaps = new ArrayList<>();
 			
-			// fields to remove
-			actionMap.remove("person");
+			actionService.getActions(skipPage).forEach(action -> {
+				actionMaps.add(action.toMap(0));
+			});
 			
-			actionMaps.add(actionMap);
+			return Map.of("actions", actionMaps);
+		} catch (Exception error) {
+			return Map.of("error", error.getMessage());
 		}
-		
-		return actionMaps;
 	}
 	
 	@GetMapping(path = "{actionId}")
-	public Map<String, Object> getAction(@PathVariable(name = "actionId") Long id) {
-		return actionService.getAction(id).toMap();
+	public Map<String, Object> getAction(
+			@PathVariable(name = "actionId") Long id,
+			@RequestParam(value = "deep", defaultValue = "false") boolean deep
+	) {
+		try {
+			return actionService.getAction(id).toMap(deep ? 1 : 0);
+		} catch (Exception error) {
+			return Map.of("error", error.getMessage());
+		}
 	}
 }

@@ -1,0 +1,121 @@
+@startuml
+title 1.0.0 Listore usecase diagram
+actor User as user
+
+package Application {
+    rectangle "Every day use" as everyday {
+        usecase "Boot up the app" as boot
+        usecase "Add new units to the stock" as addUnits
+        usecase "Create a new unit type" as addUtype
+
+        usecase "Get user_id from User" as enterUserId
+        usecase "Store user_id" as storeUserId
+
+        usecase "Get amount to store from User" as enterAmount
+        usecase "Get utype_id from User" as enterUtypeId
+        usecase "Get stored user_id" as getUserId
+        usecase "Get back a list of new unit ids" as unitIds
+        usecase "Print unit ids as codebars to stick\non unit boxes for later unit manipulation" as codebar
+
+        usecase "Get unit type name from User" as enterUtypeName
+    }
+
+
+    rectangle "Administration use" as admin {
+        usecase "Register a new user" as addUser
+        usecase "Look at .." as lookAt
+
+        usecase "Get user name from User" as enterUserName
+
+        usecase "multiple .." as multi
+        usecase "users" as multiUser
+        usecase "actions" as multiAction
+        usecase "unit types" as multiUtype
+        usecase "units" as multiUnit
+        usecase "Get page number from User" as enterPage
+        note left of enterPage : One page = 100 results
+
+        usecase "as an amount of a unit type" as unitAmount
+        usecase "Get utype_id from User" as enterUtypeIdAmount
+
+        usecase "specific .." as spec
+        usecase "user" as specUser
+        usecase "action" as specAction
+        usecase "unit type" as specUtype
+        usecase "unit" as specUnit
+        usecase "Get {x}_id from User" as enterSpecId
+    }
+
+    rectangle Requests as requests {
+        usecase "Send unit creation request" as unitPost
+        usecase "Send unit type creation request" as utypePost
+        usecase "Send user creation request" as userPost
+        usecase "Send Get request" as multiGet
+        usecase "Send Get request" as amountGet
+        usecase "Send get request" as specGet
+    }
+}
+
+actor Server as server
+
+user --> boot
+boot --> enterUserId
+enterUserId --> storeUserId
+
+
+user --> addUnits
+addUnits --> enterAmount
+enterAmount --> enterUtypeId
+enterUtypeId --> getUserId
+storeUserId .. getUserId
+getUserId --> unitPost
+unitPost -down-> server
+unitPost .left. unitIds
+server -up-> unitIds
+unitIds -up-> codebar
+codebar -up-> user
+
+
+user --> addUtype
+addUtype --> enterUtypeName
+enterUtypeName --> utypePost
+utypePost --> server
+
+
+user --> addUser
+addUser --> enterUserName
+enterUserName --> userPost
+userPost --> server
+
+
+user --> lookAt
+
+lookAt --> multi
+multi --> multiAction
+multi --> multiUnit
+multi --> multiUtype
+multi --> multiUser
+multiAction --> enterPage
+multiUnit --> enterPage
+multiUtype --> enterPage
+multiUser --> enterPage
+enterPage --> multiGet
+multiGet --> server
+
+multiUnit --> unitAmount
+unitAmount --> enterUtypeIdAmount
+enterUtypeIdAmount --> amountGet
+amountGet --> server
+
+lookAt --> spec
+spec --> specAction
+spec --> specUnit
+spec --> specUtype
+spec --> specUser
+specAction --> enterSpecId
+specUnit --> enterSpecId
+specUtype --> enterSpecId
+specUser --> enterSpecId
+enterSpecId --> specGet
+specGet --> server
+@enduml
