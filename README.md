@@ -11,4 +11,4 @@
 
 ---
 
-### Endpoint documentation can be found in [documentation/json_endpoints](https://github.com/hugo-blanchard/listore/documentation/json_endpoints)
+### Endpoint documentation can be found in [documentation/json_endpoints](https://github.com/hugo-blanchard/listore/tree/main/documentation/json_endpoints)
